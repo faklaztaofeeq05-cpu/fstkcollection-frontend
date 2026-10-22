@@ -170,3 +170,83 @@ footer small { display: block; color: #797368; font-size: 9px; margin-top: 24px;
  .admin-product-row { flex-direction:column; }
 }
 
+
+
+/* Live catalogue, owner controls and order review */
+
+.header-actions { display:flex; align-items:center; justify-content:flex-end; gap:18px; flex-wrap:wrap; }
+.live-catalogue { padding:72px clamp(20px,7vw,104px); background:#fff; color:#102a56; }
+.live-products { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; max-width:1200px; margin:0 auto; }
+.live-product { min-width:0; border:1px solid #c7d7f3; background:#f2f6ff; overflow:hidden; }
+.live-product > img { display:block; width:100%; aspect-ratio:4/4.5; object-fit:cover; background:#e7efff; }
+.live-product-info { padding:17px; }
+.product-category { text-transform:uppercase; letter-spacing:.14em; font-size:9px; font-weight:800; color:#d92735; }
+.live-product h3 { margin:8px 0; font-size:20px; }
+.live-price { font-size:18px; font-weight:850; margin:8px 0; color:#123b82; }
+.live-description { font-size:12px; color:#4d6285; line-height:1.6; white-space:pre-wrap; }
+.stock-status { margin:10px 0; font-size:12px; font-weight:800; }
+.in-stock { color:#17633a; }
+.out-of-stock { color:#b91f2b; }
+.stock-note { font-size:11px; line-height:1.5; color:#4d6285; }
+.buy-controls { display:grid; grid-template-columns:auto 72px 1fr; align-items:center; gap:8px; margin-top:14px; }
+.buy-controls label { font-size:11px; font-weight:750; }
+.buy-controls input { min-width:0; width:100%; padding:9px 7px; border:1px solid #b9cbed; background:#fff; color:#102a56; }
+.buy-controls .product-order { justify-content:center; border:0; cursor:pointer; margin:0; white-space:nowrap; }
+.product-order { display:inline-flex; margin-top:12px; padding:12px 14px; background:#123b82; color:#fff; text-decoration:none; font-size:9px; font-weight:850; letter-spacing:.08em; }
+.catalogue-empty { grid-column:1/-1; color:#4d6285; text-align:center; line-height:1.7; padding:30px 16px; }
+.admin-toggle { background:transparent; color:#ffcf33; border:1px solid #ffcf33; padding:10px 12px; font:inherit; font-size:9px; font-weight:800; letter-spacing:.08em; cursor:pointer; }
+.admin-panel { margin:0 auto; padding:38px clamp(18px,6vw,70px); max-width:1000px; background:#e7efff; color:#102a56; }
+.admin-panel[hidden], .product-form[hidden], #admin-workspace[hidden] { display:none; }
+.admin-top { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+.admin-top h2 { margin:0 0 8px; font-size:clamp(28px,4vw,42px); }
+.admin-note { color:#4d6285; font-size:12px; line-height:1.7; }
+#admin-close { background:transparent; border:1px solid #b9cbed; padding:9px 12px; cursor:pointer; }
+.product-form { display:grid; gap:16px; margin:22px 0 34px; max-width:680px; }
+.product-form label { display:grid; gap:7px; font-size:12px; font-weight:750; }
+.product-form input,.product-form select,.product-form textarea { width:100%; padding:12px; border:1px solid #b9cbed; background:#fff; color:#102a56; font:inherit; font-size:14px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.admin-message { margin:0; font-size:13px; color:#123b82; line-height:1.6; }
+.admin-message.error { color:#b91f2b; }
+.admin-products { display:grid; gap:8px; }
+.admin-product-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px; background:#fff; border:1px solid #c7d7f3; font-size:13px; }
+.admin-product-details { display:grid; gap:6px; }
+.admin-product-details span { color:#4d6285; font-size:12px; }
+.admin-product-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.admin-product-actions button { white-space:nowrap; background:transparent; border:1px solid #d92735; color:#d92735; padding:8px 10px; cursor:pointer; }
+.cart-bar { display:flex; align-items:center; justify-content:space-between; gap:20px; margin:28px auto 0; padding:20px; max-width:1200px; background:#123b82; color:#fff; }
+.cart-bar p { margin:6px 0 0; font-size:12px; color:#e2eaff; }
+.cart-bar .primary-button:disabled { opacity:.5; cursor:not-allowed; }
+.order-modal { position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; padding:18px; background:#06132bd9; overflow:auto; }
+.order-modal[hidden] { display:none; }
+.order-dialog { position:relative; width:min(100%,560px); max-height:calc(100vh - 36px); overflow:auto; padding:clamp(22px,5vw,38px); background:#fff; color:#102a56; box-shadow:0 25px 90px #0005; }
+.order-close { position:absolute; top:12px; right:14px; border:1px solid #c7d7f3; background:#fff; color:#102a56; width:36px; height:36px; font-size:25px; cursor:pointer; }
+.order-dialog h2 { margin:0 42px 10px 0; font-size:clamp(25px,5vw,34px); line-height:1.1; }
+.order-intro { color:#4d6285; font-size:13px; line-height:1.65; }
+.order-lines { display:grid; gap:8px; margin:20px 0 12px; }
+.order-line { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid #e1e8f5; font-size:13px; }
+.order-grand-total { display:flex; justify-content:space-between; padding:15px 0; font-size:14px; border-bottom:1px solid #c7d7f3; }
+.order-grand-total strong { font-size:18px; }
+.order-details { display:grid; gap:14px; margin-top:18px; }
+.order-details label { display:grid; gap:7px; font-size:12px; font-weight:750; }
+.order-details input { width:100%; padding:12px; border:1px solid #b9cbed; background:#fff; color:#102a56; font:inherit; font-size:14px; }
+.order-disclaimer { margin:0; color:#4d6285; font-size:11px; line-height:1.6; }
+.order-details .primary-button { width:100%; border:0; cursor:pointer; }
+@media(max-width:800px) { .live-products { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:620px) {
+ .site-header { flex-wrap:wrap; }
+ .header-actions { width:100%; justify-content:space-between; gap:10px; }
+ .admin-toggle { margin-left:0; }
+ .live-catalogue { padding:58px 16px; }
+ .live-products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+ .live-product-info { padding:12px; }
+ .live-product h3 { font-size:16px; }
+ .live-price { font-size:15px; }
+ .product-order { font-size:8px; padding:10px 8px; }
+ .admin-panel { padding:28px 16px; }
+ .form-row { grid-template-columns:1fr; }
+ .admin-product-row { align-items:flex-start; flex-direction:column; }
+ .buy-controls { grid-template-columns:1fr 72px; }
+ .buy-controls .product-order { grid-column:1/-1; width:100%; }
+ .cart-bar { align-items:stretch; flex-direction:column; gap:12px; padding:16px; }
+ .cart-bar .primary-button { width:100%; }
+}

@@ -138,7 +138,8 @@ document.querySelector("#owner-logout")?.addEventListener("click",async()=>{
  document.querySelector("#owner-login").reset();
  adminMessage("You have signed out.");
 });
-\ndocument.querySelector("#admin-toggle")?.addEventListener("click",()=>{
+
+document.querySelector("#admin-toggle")?.addEventListener("click",()=>{
  const panel=document.querySelector("#admin-panel"), button=document.querySelector("#admin-toggle");
  const opening=panel.hidden; panel.hidden=!opening; button.setAttribute("aria-expanded",String(opening));
  if(opening)panel.scrollIntoView({behavior:"smooth",block:"start"});

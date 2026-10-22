@@ -81,10 +81,11 @@
           </div>
         </section>
         <section class="admin-panel" id="admin-panel" hidden>
-          <div class="admin-top"><div><p class="eyebrow">PRIVATE OWNER AREA</p><h2>Manage products</h2><p class="admin-note">Sign in with your server-side admin token. It is kept only in this page session and is not published in the website code.</p></div><button id="admin-close" type="button">Close ×</button></div>
+          <div class="admin-top"><div><p class="eyebrow">PRIVATE OWNER AREA</p><h2>Manage products</h2><p class="admin-note">Sign in with your owner email and password. Your password is verified on the server and is never stored in this website.</p></div><button id="admin-close" type="button">Close ×</button></div>
           <form id="owner-login" class="product-form">
-            <label>Admin token<input id="admin-token" type="password" autocomplete="current-password" required placeholder="Enter your private admin token"></label>
-            <button class="primary-button" type="submit">VERIFY OWNER ACCESS</button>
+            <label>Owner email<input name="email" type="email" autocomplete="username" required placeholder="you@example.com"></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" required placeholder="Enter your password"></label>
+            <button class="primary-button" type="submit">SIGN IN SECURELY</button>
             <p id="admin-message" class="admin-message" role="status"></p>
           </form>
           <div id="admin-workspace" hidden>

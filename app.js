@@ -139,19 +139,21 @@ document.querySelector("#admin-close")?.addEventListener("click",()=>{
 });
 document.querySelector("#owner-login")?.addEventListener("submit",async e=>{
  e.preventDefault();
- const input=document.querySelector("#admin-token"), token=input.value.trim(), submit=e.currentTarget.querySelector('button[type="submit"]');
- if(!token)return;
- submit.disabled=true; adminMessage("Checking owner access…");
+ const form=e.currentTarget, email=String(new FormData(form).get("email")||"").trim(), password=String(new FormData(form).get("password")||"");
+ const submit=form.querySelector('button[type="submit"]');
+ if(!email||!password)return;
+ submit.disabled=true; adminMessage("Signing in securely…");
  try{
-  const response=await fetch(API_BASE+"/api/products?all=true",{headers:{"x-admin-token":token}});
+  const response=await fetch(API_BASE+"/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
   const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw new Error(data.error||"Owner verification failed. Check your token and API settings.");
-  sessionStorage.setItem(ADMIN_KEY,token);
-  document.querySelector("#owner-login").hidden=true;
+  if(!response.ok)throw new Error(data.error||"Owner sign-in failed.");
+  sessionStorage.setItem(ADMIN_KEY,data.token);
+  form.reset();
+  form.hidden=true;
   document.querySelector("#admin-workspace").hidden=false;
-  adminMessage("Owner access verified.");
-  adminProductRows(Array.isArray(data.products)?data.products:[]);
- }catch(err){sessionStorage.removeItem(ADMIN_KEY);adminMessage(err.message+" If the request is blocked, the backend CORS_ORIGIN must include https://fstkcollections.name.ng.",true);}
+  adminMessage("Owner sign-in successful.");
+  await refreshAdminProducts();
+ }catch(err){sessionStorage.removeItem(ADMIN_KEY);adminMessage(err.message+" If sign-in says credentials are not configured, set OWNER_EMAIL and OWNER_PASSWORD in Render.",true);}
  finally{submit.disabled=false;}
 });
 document.querySelector("#product-form")?.addEventListener("submit",async e=>{
@@ -179,12 +181,11 @@ document.querySelector("#product-form")?.addEventListener("submit",async e=>{
  try{
   const response=await fetch(API_BASE+"/api/products?all=true",{headers:adminHeaders()});
   if(!response.ok)throw new Error("Session expired");
-  const data=await response.json();
   document.querySelector("#owner-login").hidden=true;
   document.querySelector("#admin-workspace").hidden=false;
-  adminProductRows(Array.isArray(data.products)?data.products:[]);
+  await refreshAdminProducts();
   adminMessage("Owner session restored for this browser tab.");
  }catch{sessionStorage.removeItem(ADMIN_KEY);}
-})();
+})();;
 
 loadProducts();

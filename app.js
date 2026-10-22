@@ -30,7 +30,11 @@ async function loadProducts(){
    cart.set(id,{id,name:p.name,price:productPrice(p),quantity:existing+quantity,stock});
    updateCartDisplay(); button.textContent="ADDED ✓"; window.setTimeout(()=>{if(button.isConnected)button.textContent="ADD TO ORDER +";},1200);
   }));
- } catch { target.innerHTML='<p class="catalogue-empty">Products could not load right now. Please contact us on WhatsApp for current styles and prices.</p>'; }
+ } catch (error) {
+  console.error("FSTK catalogue load failed:", error);
+  target.innerHTML='<div class="catalogue-empty"><p>We could not load the live product catalogue.</p><p>Please refresh this page or message us on WhatsApp.</p><button class="product-order" type="button" id="retry-products">TRY AGAIN ↻</button></div>';
+  document.querySelector("#retry-products")?.addEventListener("click", loadProducts);
+ }
 }
 function updateCartDisplay(){
  const items=[...cart.values()], count=items.reduce((s,i)=>s+i.quantity,0), total=items.reduce((s,i)=>s+i.price*i.quantity,0);

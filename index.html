@@ -13,7 +13,7 @@
       <div class="announcement">ABUJA BASED · NATIONWIDE DELIVERY AVAILABLE</div>
       <header class="site-header">
         <a class="wordmark" href="#home" aria-label="FSTK Collections home">FSTK <span>COLLECTIONS</span></a>
-        <a class="header-order" href="https://wa.me/2347083752801?text=Hello%20FSTK%20COLLECTIONS%2C%20I%27d%20like%20to%20make%20an%20order." target="_blank" rel="noopener noreferrer">ORDER ON WHATSAPP ↗</a>
+        <div class="header-actions"><a class="header-order" href="https://wa.me/2347083752801?text=Hello%20FSTK%20COLLECTIONS%2C%20I%27d%20like%20to%20make%20an%20order." target="_blank" rel="noopener noreferrer">ORDER ON WHATSAPP ↗</a>        <button class="admin-toggle" id="admin-toggle" type="button" aria-expanded="false">OWNER: MANAGE PRODUCTS</button></div>
       </header>
       <main id="home">
         <section class="hero">
@@ -71,6 +71,58 @@
             <p class="range-note">Tap any category to ask about current stock, sizes and prices on WhatsApp.</p>
           </div>
         </section>
+
+        <section class="live-catalogue" id="shop-products">
+          <div class="section-heading"><p class="eyebrow">SHOP THE LATEST</p><h2>Available now.</h2><p>Browse current products, prices and stock.</p></div>
+          <div class="live-products" id="live-products"><p class="catalogue-empty">Loading the latest collection…</p></div>
+          <div class="cart-bar">
+            <div><strong id="cart-count">Your order is empty</strong><p id="cart-total">Add products to begin.</p></div>
+            <button class="primary-button" id="checkout-order" type="button" disabled>REVIEW ORDER ↗</button>
+          </div>
+        </section>
+        <section class="admin-panel" id="admin-panel" hidden>
+          <div class="admin-top"><div><p class="eyebrow">PRIVATE OWNER AREA</p><h2>Manage products</h2><p class="admin-note">Sign in with your server-side admin token. It is kept only in this page session and is not published in the website code.</p></div><button id="admin-close" type="button">Close ×</button></div>
+          <form id="owner-login" class="product-form">
+            <label>Admin token<input id="admin-token" type="password" autocomplete="current-password" required placeholder="Enter your private admin token"></label>
+            <button class="primary-button" type="submit">VERIFY OWNER ACCESS</button>
+            <p id="admin-message" class="admin-message" role="status"></p>
+          </form>
+          <div id="admin-workspace" hidden>
+            <h3>Add a product</h3>
+            <form id="product-form" class="product-form">
+              <label>Product name<input name="name" required maxlength="160" placeholder="e.g. Classic sneakers"></label>
+              <div class="form-row">
+                <label>Category<select name="category"><option>Men's Wear</option><option>Women's Wear</option><option>Shoes</option><option>Bags</option><option>Accessories</option><option>Unisex Wear</option><option>Other</option></select></label>
+                <label>Price (₦)<input name="price" type="number" min="0" step="1" required placeholder="25000"></label>
+              </div>
+              <div class="form-row">
+                <label>Quantity in stock<input name="stock" type="number" min="0" step="1" required value="1"></label>
+                <label>Product photo (optional)<input name="imageFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
+              </div>
+              <label>Or paste a public image URL<input name="imageUrl" type="url" placeholder="https://..."></label>
+              <label>Description<textarea name="description" rows="3" maxlength="1500" placeholder="Sizes, colours, material, details…"></textarea></label>
+              <p class="admin-note">For reliable uploads, choose a clear JPG, PNG or WebP photo. Images are compressed in your browser before being sent.</p>
+              <button class="primary-button" type="submit">PUBLISH PRODUCT ↗</button>
+            </form>
+            <h3>Current products</h3>
+            <div id="admin-products" class="admin-products"><p class="admin-note">Loading products…</p></div>
+          </div>
+        </section>
+        <div class="order-modal" hidden>
+          <div class="order-dialog" role="dialog" aria-modal="true" aria-labelledby="order-title">
+            <button class="order-close" id="order-close" type="button" aria-label="Close order review">×</button>
+            <p class="eyebrow">YOUR SELECTION</p><h2 id="order-title">Review your order</h2>
+            <p class="order-intro">Check your items, then send your order request. We’ll confirm delivery fee and payment details on WhatsApp.</p>
+            <div class="order-lines" id="order-lines"></div>
+            <div class="order-grand-total"><span>Estimated total</span><strong id="order-grand-total">₦0</strong></div>
+            <form id="order-details" class="order-details">
+              <label>Your name<input name="customerName" required maxlength="120" autocomplete="name" placeholder="Full name"></label>
+              <label>Delivery location<input name="deliveryLocation" required maxlength="300" autocomplete="street-address" placeholder="Area, city"></label>
+              <p class="order-disclaimer">This is an order request, not an online payment. Stock is checked when you submit.</p>
+              <button class="primary-button" type="submit">SEND ORDER ON WHATSAPP ↗</button>
+            </form>
+          </div>
+        </div>
         <section class="delivery"><div><p class="eyebrow">FROM ABUJA TO YOU</p><h2>Your style, delivered.</h2><p>We’re based in Abuja and welcome orders from across Nigeria. Message us to check availability, prices, sizes and delivery details.</p></div><a class="primary-button" href="https://wa.me/2347083752801?text=Hello%20FSTK%20COLLECTIONS%2C%20I%27d%20like%20to%20ask%20about%20delivery%20to%20my%20location." target="_blank" rel="noopener noreferrer">ASK ABOUT DELIVERY ↗</a></section>
         <section class="contact"><p class="eyebrow">READY WHEN YOU ARE</p><h2>Let’s get you styled.</h2><p>Send us a message on WhatsApp to place an order or ask a question.</p><a class="primary-button light-button" href="https://wa.me/2347083752801?text=Hello%20FSTK%20COLLECTIONS%2C%20I%27d%20like%20to%20make%20an%20enquiry." target="_blank" rel="noopener noreferrer">CHAT WITH FSTK COLLECTIONS ↗</a><p class="contact-number">+234 708 375 2801</p></section>
       </main>

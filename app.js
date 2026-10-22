@@ -128,7 +128,17 @@ async function refreshAdminProducts() {
  const data=await apiJson("/api/products?all=true",{headers:adminHeaders()});
  adminProductRows(Array.isArray(data.products)?data.products:[]);
 }
-document.querySelector("#admin-toggle")?.addEventListener("click",()=>{
+
+document.querySelector("#owner-logout")?.addEventListener("click",async()=>{
+ const token=adminToken();
+ try{ if(token) await fetch(API_BASE+"/api/admin/logout",{method:"POST",headers:{"x-admin-token":token}}); }catch{}
+ sessionStorage.removeItem(ADMIN_KEY);
+ document.querySelector("#admin-workspace").hidden=true;
+ document.querySelector("#owner-login").hidden=false;
+ document.querySelector("#owner-login").reset();
+ adminMessage("You have signed out.");
+});
+\ndocument.querySelector("#admin-toggle")?.addEventListener("click",()=>{
  const panel=document.querySelector("#admin-panel"), button=document.querySelector("#admin-toggle");
  const opening=panel.hidden; panel.hidden=!opening; button.setAttribute("aria-expanded",String(opening));
  if(opening)panel.scrollIntoView({behavior:"smooth",block:"start"});
@@ -148,12 +158,17 @@ document.querySelector("#owner-login")?.addEventListener("submit",async e=>{
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(data.error||"Owner sign-in failed.");
   sessionStorage.setItem(ADMIN_KEY,data.token);
+  await refreshAdminProducts();
   form.reset();
   form.hidden=true;
   document.querySelector("#admin-workspace").hidden=false;
   adminMessage("Owner sign-in successful.");
-  await refreshAdminProducts();
- }catch(err){sessionStorage.removeItem(ADMIN_KEY);adminMessage(err.message+" If sign-in says credentials are not configured, set OWNER_EMAIL and OWNER_PASSWORD in Render.",true);}
+ }catch(err){
+  sessionStorage.removeItem(ADMIN_KEY);
+  form.hidden=false;
+  document.querySelector("#admin-workspace").hidden=true;
+  adminMessage(err.message+" If sign-in fails, verify the latest API deployment and owner credentials.",true);
+ }
  finally{submit.disabled=false;}
 });
 document.querySelector("#product-form")?.addEventListener("submit",async e=>{
@@ -181,9 +196,9 @@ document.querySelector("#product-form")?.addEventListener("submit",async e=>{
  try{
   const response=await fetch(API_BASE+"/api/products?all=true",{headers:adminHeaders()});
   if(!response.ok)throw new Error("Session expired");
+  await refreshAdminProducts();
   document.querySelector("#owner-login").hidden=true;
   document.querySelector("#admin-workspace").hidden=false;
-  await refreshAdminProducts();
   adminMessage("Owner session restored for this browser tab.");
  }catch{sessionStorage.removeItem(ADMIN_KEY);}
 })();;

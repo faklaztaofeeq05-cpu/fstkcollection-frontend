@@ -168,7 +168,7 @@ document.querySelector("#owner-login")?.addEventListener("submit",async e=>{
   sessionStorage.removeItem(ADMIN_KEY);
   form.hidden=false;
   document.querySelector("#admin-workspace").hidden=true;
-  adminMessage(err.message+" If sign-in fails, verify the latest API deployment and owner credentials.",true);
+  adminMessage(err.message+" Check the API deployment and owner credentials, then try again.",true);
  }
  finally{submit.disabled=false;}
 });

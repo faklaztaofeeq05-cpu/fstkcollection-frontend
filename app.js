@@ -160,6 +160,7 @@ document.querySelector("#owner-login")?.addEventListener("submit",async e=>{
   if(!response.ok)throw new Error(data.error||"Owner sign-in failed.");
   sessionStorage.setItem(ADMIN_KEY,data.token);
   await refreshAdminProducts();
+  await refreshAdminOrders();
   form.reset();
   form.hidden=true;
   document.querySelector("#admin-workspace").hidden=false;
@@ -198,10 +199,76 @@ document.querySelector("#product-form")?.addEventListener("submit",async e=>{
   const response=await fetch(API_BASE+"/api/products?all=true",{headers:adminHeaders()});
   if(!response.ok)throw new Error("Session expired");
   await refreshAdminProducts();
+  await refreshAdminOrders();
   document.querySelector("#owner-login").hidden=true;
   document.querySelector("#admin-workspace").hidden=false;
   adminMessage("Owner session restored for this browser tab.");
  }catch{sessionStorage.removeItem(ADMIN_KEY);}
 })();;
+
+
+async function refreshAdminOrders() {
+ const workspace=document.querySelector("#admin-workspace");
+ if(!workspace)return;
+ let section=document.querySelector("#admin-orders-section");
+ if(!section){
+  section=document.createElement("section");
+  section.id="admin-orders-section";
+  section.className="admin-orders-section";
+  section.innerHTML='<div class="admin-workspace-heading"><h3>Customer orders & sales</h3><button id="refresh-orders" type="button">REFRESH ORDERS ↻</button></div><p class="admin-note">Orders do not reduce stock until you explicitly confirm that the product was bought. Use “CONFIRM SALE & REDUCE STOCK” only after the sale is real.</p><div id="admin-orders-list"><p class="admin-note">Loading orders…</p></div>';
+  workspace.appendChild(section);
+  section.querySelector("#refresh-orders")?.addEventListener("click",()=>refreshAdminOrders().catch(err=>adminMessage(err.message,true)));
+ }
+ const list=section.querySelector("#admin-orders-list");
+ list.innerHTML='<p class="admin-note">Loading orders…</p>';
+ try{
+  const data=await apiJson("/api/orders",{headers:adminHeaders()});
+  const orders=Array.isArray(data.orders)?data.orders:[];
+  if(!orders.length){list.innerHTML='<p class="admin-note">No customer orders yet.</p>';return;}
+  const statusLabel={pending:"Pending",confirmed:"Confirmed",packed:"Packed",dispatched:"Dispatched",completed:"Sale confirmed",cancelled:"Cancelled"};
+  list.innerHTML=orders.map(order=>{
+   const id=String(order.id), items=Array.isArray(order.items)?order.items:[];
+   const itemText=items.map(item=>safe(item.product_name)+" × "+Number(item.quantity||0)).join(", ")||"No items";
+   const total=Number(order.total_kobo||0)/100;
+   const date=order.created_at?new Date(order.created_at).toLocaleString():"";
+   const deducted=order.stock_deducted===true || order.stock_deducted==="true";
+   const status=String(order.status||"pending").toLowerCase();
+   const saleButton=deducted
+    ? '<button type="button" disabled class="sale-confirmed-button">STOCK ALREADY RECORDED ✓</button>'
+    : status==="cancelled"
+      ? '<button type="button" disabled>Cancelled order</button>'
+      : '<button type="button" class="sale-confirm-button" data-confirm-sale="'+safe(id)+'">CONFIRM SALE & REDUCE STOCK</button>';
+   const nextButtons=[
+    ["confirmed","CONFIRM ORDER"],["packed","MARK PACKED"],["dispatched","MARK DISPATCHED"],["cancelled","CANCEL ORDER"]
+   ].filter(([next])=>status!==next && status!=="completed" && status!=="cancelled")
+    .map(([next,label])=>'<button type="button" data-order-status="'+safe(id)+'" data-next-status="'+next+'">'+label+'</button>').join("");
+   return '<article class="admin-order-row" style="border:1px solid #dedbd4;border-radius:12px;padding:14px;margin:12px 0"><div class="admin-order-head" style="display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap"><strong>Order #'+safe(id)+'</strong><span><b>Status:</b> '+safe(statusLabel[status]||status)+'</span></div><p><b>Customer:</b> '+safe(order.customer_name||"")+'</p><p><b>Delivery:</b> '+safe(order.delivery_address||"")+'</p><p><b>Items:</b> '+itemText+'</p><p><b>Total:</b> '+money(total)+'</p><p><b>Placed:</b> '+safe(date)+'</p><p class="admin-note">'+(deducted?"Stock has already been recorded for this order.":"Stock has not been deducted for this order.")+'</p><div class="admin-product-actions">'+nextButtons+saleButton+'</div></article>';
+  }).join("");
+  list.querySelectorAll("[data-confirm-sale]").forEach(button=>button.addEventListener("click",async()=>{
+   const id=button.dataset.confirmSale;
+   if(!confirm("Confirm that order #"+id+" was actually bought? This will reduce stock by the quantities in the order."))return;
+   button.disabled=true;button.textContent="RECORDING SALE…";
+   try{
+    await apiJson("/api/orders/"+encodeURIComponent(id),{method:"PATCH",headers:adminHeaders(true),body:JSON.stringify({status:"completed"})});
+    adminMessage("Sale confirmed. Stock has been reduced once for order #"+id+".");
+    await refreshAdminProducts(); await loadProducts(); await refreshAdminOrders();
+   }catch(err){adminMessage(err.message,true);await refreshAdminOrders();}
+  }));
+  list.querySelectorAll("[data-order-status]").forEach(button=>button.addEventListener("click",async()=>{
+   const id=button.dataset.orderStatus, next=button.dataset.nextStatus;
+   const promptText=next==="cancelled"?"Cancel order #"+id+"? Stock will not be reduced.":"Update order #"+id+" to "+next+"? Stock will not be reduced.";
+   if(!confirm(promptText))return;
+   button.disabled=true;
+   try{
+    await apiJson("/api/orders/"+encodeURIComponent(id),{method:"PATCH",headers:adminHeaders(true),body:JSON.stringify({status:next})});
+    adminMessage("Order #"+id+" updated to "+next+". Stock was not changed.");
+    await refreshAdminOrders();
+   }catch(err){adminMessage(err.message,true);await refreshAdminOrders();}
+  }));
+ }catch(err){
+  list.innerHTML='<p class="admin-note">Could not load customer orders. '+safe(err.message)+'</p>';
+ }
+}
+
 
 loadProducts();
